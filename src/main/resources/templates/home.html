@@ -13,6 +13,18 @@
             height: 100vh;
             margin: 0;
         }
+        h1 {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            width: 100%;
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Shadow
+        }
 
         /* Optional: Additional styling for content */
         h1, img, input, button {
@@ -23,32 +35,46 @@
             max-width: 100%;
             height: auto;
         }
+
+        #imageUploadInput {
+            display: none; /* Hide the file input */
+        }
+
+        /* Optional: Add styling for the custom button */
+        #customButton {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <h1>imatch</h1>
+<h1>imatch</h1>
 
-    <img src="/upload.jpg" alt="Image" id="uploadedImage" width="300">
+<img src="/upload.jpg" alt="Image" id="uploadedImage" width="300">
 
-    <input type="file" id="imageUploadInput" accept="image/*">
-    <button onclick="uploadImage()">Upload</button>
-    <script>
-        function uploadImage() {
-            var input = document.getElementById('imageUploadInput');
-            var image = document.getElementById('uploadedImage');
+<input type="file" id="imageUploadInput" accept="image/*">
+<label for="imageUploadInput" id="customButton">Choose Image</label>
 
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
+<script>
+    document.getElementById('imageUploadInput').onchange = function () {
+        var image = document.getElementById('uploadedImage');
 
-                reader.onload = function (e) {
-                    image.src = e.target.result;
-                };
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
 
-                reader.readAsDataURL(input.files[0]);
-            }
+            reader.onload = function (e) {
+                image.src = e.target.result;
+            };
+
+            reader.readAsDataURL(this.files[0]);
         }
-    </script>
+    };
+</script>
 
 </body>
 </html>
