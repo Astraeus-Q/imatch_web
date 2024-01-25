@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,34 +14,37 @@
             height: 100vh;
             margin: 0;
         }
+
         h1 {
-            position: fixed;
+            position: absolute;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
             background-color: #fff;
             width: 100%;
             text-align: center;
             margin: 0;
             padding: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Shadow
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow */
         }
 
         /* Optional: Additional styling for content */
-        h1, img, input, button {
+        h1,
+        img,
+        input,
+        button {
             margin: 10px 0;
         }
 
         img {
             max-width: 100%;
             height: auto;
+            margin-bottom: 50px;
         }
 
         #imageUploadInput {
-            display: none; /* Hide the file input */
+            display: none; <!-- Hide the file input -->
         }
 
-        /* Optional: Add styling for the custom button */
+        /* Styling for the custom buttons */
         #customButton {
             padding: 10px;
             background-color: #4CAF50;
@@ -48,9 +52,36 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 50px;
+        }
+
+        #uploadButton {
+            padding: 10px;
+            background-color: #123456;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 150px;
+            margin-bottom: 50px;
+        }
+
+        #clearButton {
+            padding: 10px;
+            background-color: #FF5733; <!-- Adjust color as needed -->
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 150px;
+            margin-bottom: 50px;
         }
     </style>
 </head>
+
 <body>
 
 <h1>imatch</h1>
@@ -59,6 +90,12 @@
 
 <input type="file" id="imageUploadInput" accept="image/*">
 <label for="imageUploadInput" id="customButton">Choose Image</label>
+<button id="uploadButton" disabled>Upload Image</button>
+<button id="clearButton" disabled>Clear</button>
+
+<div id="matchingResultsContainer">
+    <!-- Matching results will be displayed here -->
+</div>
 
 <script>
     document.getElementById('imageUploadInput').onchange = function () {
@@ -70,9 +107,43 @@
             reader.onload = function (e) {
                 image.src = e.target.result;
             };
-
             reader.readAsDataURL(this.files[0]);
+
+            // Enable the "Upload Image" and "Clear" buttons
+            document.getElementById('uploadButton').disabled = false;
+            document.getElementById('clearButton').disabled = false;
         }
+    };
+
+    document.getElementById('uploadButton').onclick = function () {
+        var input = document.getElementById('imageUploadInput');
+        if (input.files && input.files[0]) {
+            var formData = new FormData();
+            formData.append('file', input.files[0]);
+
+            fetch('http://localhost:8080/api/image/upload', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(data => {
+                    // Display matching results HTML in the 'matchingResultsContainer'
+                    document.getElementById('matchingResultsContainer').innerHTML = data;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    };
+
+    document.getElementById('clearButton').onclick = function () {
+        // Reset the uploaded image to the default one
+        document.getElementById('uploadedImage').src = '/upload.jpg';
+
+        // Clear matching results
+        document.getElementById('matchingResultsContainer').innerHTML = '';
+
+        // Disable the "Upload Image" and "Clear" buttons again
+        document.getElementById('uploadButton').disabled = true;
+        document.getElementById('clearButton').disabled = true;
     };
 </script>
 
