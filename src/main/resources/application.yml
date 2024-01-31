@@ -4,3 +4,7 @@ spring:
     url: jdbc:mysql://localhost:3306/server_db
     username: root
     password: 123456
+
+# Path for saving uploaded files.
+upload:
+  directory: D:\CS\Data_System\Master Project\web\imatch\src\main\resources\static\uploaded

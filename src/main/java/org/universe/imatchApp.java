@@ -5,8 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * Hello world!
- *
+ * http://localhost:8080/home
  */
 @SpringBootApplication
 public class imatchApp

@@ -1,4 +1,6 @@
 package org.universe.controller;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,17 +21,41 @@ public class ImageController {
         return new ModelAndView("index");
     }
 
+    @Value("${upload.directory}")
+    private String uploadDirectory;
+
     @PostMapping("/upload")
     @ResponseBody
     public String handleFileUpload(@RequestParam("file") MultipartFile file) {
-        // Process the uploaded file (save it, etc.)
-        System.out.println("Received file: " + file.getOriginalFilename());
+        if (file.isEmpty()) {
+            return "Please select a file to upload";
+        }
 
-        // Perform image processing and generate matching results HTML
-        String matchingResults = generateMatchingResults(file);
+        try {
+            // Get the file bytes
+            byte[] bytes = file.getBytes();
 
-        // Return the matching results HTML as a response
-        return matchingResults;
+            // Create the directory if it doesn't exist
+            File directory = new File(uploadDirectory);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // Construct the file path and save the file
+            String filePath = uploadDirectory + File.separator + file.getOriginalFilename();
+            File uploadedFile = new File(filePath);
+            file.transferTo(uploadedFile);
+
+            System.out.println("File uploaded successfully to: " + filePath);
+
+            // Perform image processing and generate matching results HTML
+            String matchingResults = generateMatchingResults(file);
+
+            // Return the matching results HTML as a response
+            return matchingResults;
+        } catch (IOException e) {
+            return "Failed to upload file: " + e.getMessage();
+        }
     }
 
     @RequestMapping("/getAdditionalImage")
