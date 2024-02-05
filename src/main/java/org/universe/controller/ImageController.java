@@ -15,6 +15,18 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import org.apache.commons.io.FileUtils;
+import java.util.List;
+import java.util.stream.Collectors;
+
+
+// File
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+// JSON
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/api/image")
@@ -26,7 +38,7 @@ public class ImageController {
     }
 
     @Value("${upload.directory}")
-    private String uploadDirectory;
+    private String uploadDirectory; // Defined in application.yml.
 
     @PostMapping("/upload")
     @ResponseBody
@@ -72,12 +84,30 @@ public class ImageController {
     }
 
 
-    // Currently not in use.
-    @RequestMapping("/getAdditionalImage")
+    private static int globalidx = 0;
+    @RequestMapping("/getImage")
     @ResponseBody
-    public byte[] getAdditionalImage() throws IOException {
-        // Load the additional image from the classpath or any location
-        File file = new File("src/main/resources/static/200OK.png");
+    public byte[] getImage() throws IOException {
+        // Load the image with index.
+        String folderPath = "src/main/resources/static/results/";
+        List<Path> filePaths = Files.walk(Paths.get(folderPath))
+                .filter(Files::isRegularFile)
+                .collect(Collectors.toList());
+
+        if (filePaths.size() <= globalidx + 1){
+            String err = "Error: No such image!";
+            System.out.println(err);
+            return err.getBytes();
+        }
+
+        System.out.println(globalidx);
+        String img_path = filePaths.get(globalidx).toString();
+        File file = new File(img_path);
+
+        // Update for next request.
+        globalidx += 1;
+        globalidx = globalidx % 4;
+
         return org.apache.commons.io.FileUtils.readFileToByteArray(file);
     }
 
@@ -85,7 +115,7 @@ public class ImageController {
         // Delegate a Python script to match similar images.
         //String arg1 = "";
         //String arg2 = "";
-        ProcessBuilder match_image = new ProcessBuilder("python", "python/image_match.py");
+        ProcessBuilder match_image = new ProcessBuilder("python", "D:/CS/Data_System/Master Project/web/imatch/src/main/java/org/universe/python/match_image.py");
 
         // Start the process
         Process process = match_image.start();
@@ -102,11 +132,10 @@ public class ImageController {
 
         // Wait for the process to complete
         int exitCode = process.waitFor();
-        System.out.println("Python script executed with exit code: " + exitCode);
+        System.out.println("Python script executed");
 
-        String res = "OK";
-        return res;
-        // Simple return 4 default images:
-        //return "<h2>Matching Results</h2><img src=\"/api/image/getAdditionalImage\" alt=\"Additional Image\" width=\"300\"><img src=\"/api/image/getAdditionalImage\" alt=\"Additional Image\" width=\"300\"><img src=\"/api/image/getAdditionalImage\" alt=\"Additional Image\" width=\"300\"><img src=\"/api/image/getAdditionalImage\" alt=\"Additional Image\" width=\"300\">";
+
+        // Simple return 4 images:
+        return "<h2>Matching Results</h2><img src=\"/api/image/getImage?idx=0\" width=\"300\"><img src=\"/api/image/getImage?idx=1\" width=\"300\"><img src=\"/api/image/getImage?idx=2\" width=\"300\"><img src=\"/api/image/getImage?idx=3\" width=\"300\">";
     }
 }

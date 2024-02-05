@@ -1,7 +1,8 @@
 from towhee import pipe, ops
 from pymilvus import connections, Collection
 import os
-import re
+import shutil
+# import json
 
 img_embedding = (
     pipe.input('path')
@@ -20,7 +21,6 @@ for file_name in os.listdir(upload_directory):
 # if file_name == "":
 #     raise FileNotFoundError("File not found!!!")
 
-output_directory = ""
 
 
 
@@ -60,6 +60,26 @@ query_res = Image.query(
   output_fields = ["img_id", "path"],
 )
 
-print(query_res)
+# output_path = "D://CS//Data_System//Master Project//web//imatch//src//main//java//org//universe//python//result.json"
+# with open(output_path, 'w+') as json_file:
+#     json.dump(query_res, json_file, indent=4)
+
+result_path = "D:/CS/Data_System/Master Project/web/imatch/src/main/resources/static/results"
+
+
+file_list = os.listdir(result_path)
+if len(file_list):
+    # Clear the directory.
+    for filename in file_list:
+        file_path = os.path.join(result_path, filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+
+# print(query_res)
+# print(query_res[0])
+for entity in query_res:
+    p = entity["path"]
+    shutil.copy(p, result_path)
+
 
 Image.release()
