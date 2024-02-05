@@ -19,6 +19,7 @@ path = FieldSchema(
   dtype = DataType.VARCHAR,  
   max_length=128
 )
+
 vector = FieldSchema(
   name = "vector", 
   dtype = DataType.FLOAT_VECTOR, 

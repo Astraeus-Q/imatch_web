@@ -1,9 +1,6 @@
 from pymilvus import connections, Collection, utility
 import json
 
-milvus_host = 'localhost'
-milvus_port = 19530
-
 collection_name = 'Image'
 
 connections.connect(
