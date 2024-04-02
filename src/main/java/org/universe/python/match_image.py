@@ -43,7 +43,7 @@ Image = Collection("Image")
 Image.load()
 search_params = {"metric_type": "L2", "params": {"nprobe": 200}}
 
-print("Searchin in Image...")
+print("Searching Image...")
 search_res = Image.search(
 	data = [img_vector], 
 	anns_field = "vector", 
@@ -79,6 +79,7 @@ if len(file_list):
 # print(query_res[0])
 for entity in query_res:
     p = entity["path"]
+    print(p)
     shutil.copy(p, result_path)
 
 

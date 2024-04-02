@@ -38,7 +38,7 @@ with open(json_file_path, 'r') as json_file:
         if i % 1000  == 0:
             print("Inserting data...")
             mr = Image.insert(data)
-            print("Insert 100000 data successfully!")
+            print("Insert 1000 data successfully!")
             data = [[], [], []] # Reload data.
         i += 1
 
