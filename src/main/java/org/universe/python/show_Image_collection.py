@@ -10,8 +10,8 @@ print(utility.list_collections())
 Image = Collection("Image")
 print(Image.num_entities)
 print(Image.description)
-if not Image.loaded():
-    Image.load()
+
+Image.load()
 
 
 ids = [1,2,3]
